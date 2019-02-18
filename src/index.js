@@ -5,16 +5,46 @@ import "./index.css";
 function Square(props) {
   return (
     <button className="square" onClick={props.onClick}>
-      {props.value}
+      {props.valueXorO}
     </button>
   );
+}
+
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { date: new Date() };
+  }
+
+  //lifecycle methods
+  componentDidMount() {
+    this.timerID = setInterval(() => this.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    this.setState({
+      date: new Date()
+    });
+  }
+  //toLocaleTimeString is a predefined function
+  render() {
+    return (
+      <div>
+        <h1> Hey everybody!! It's {this.state.date.toLocaleTimeString()}</h1>
+      </div>
+    );
+  }
 }
 
 class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square
-        value={this.props.squares[i]}
+        valueXorO={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
     );
@@ -83,16 +113,19 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+    console.log(current);
 
-    const moves = history.map((step, move) => {
-      const desc = move ? "Go to move #" + move : "Go to game start";
+    const moves = history.map((mappingCallbackFunction, index) => {
+      const desc = index ? "Go to move #" + index : "Go to game start";
       return (
         //renders in ordered list in return segment
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+        <li key={index}>
+          <button onClick={() => this.jumpTo(index)}>{desc}</button>
         </li>
       );
     });
+
+    console.log(moves);
 
     let status;
     if (winner) {
@@ -102,6 +135,10 @@ class Game extends React.Component {
     }
     return (
       <div className="game">
+        <div className="clock">
+          {" "}
+          <Clock />
+        </div>
         <div className="game-board">
           <Board squares={current.squares} onClick={i => this.handleClick(i)} />
         </div>
