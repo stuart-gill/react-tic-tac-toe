@@ -1,22 +1,27 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import "../index.css";
-import Clock from "./Clock";
+//import Clock from "./Clock";
 import Board from "./Board";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+
+
+
+
 
 class Game extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      history: [
-        {
-          squares: Array(9).fill(null)
-        }
-      ],
-      xIsNext: true,
-      stepNumber: 0
-    };
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     history: [
+  //       {
+  //         squares: Array(9).fill(null)
+  //       }
+  //     ],
+  //     xIsNext: true,
+  //     stepNumber: 0
+  //   };
+  // }
 
   jumpTo(step) {
     this.setState({
@@ -66,16 +71,16 @@ class Game extends React.Component {
     }
     return (
       <div className="game">
-        <div className="clock">
+        {/* <div className="clock">
           {" "}
           <Clock />
-        </div>
+        </div> */}
         <div className="game-board">
           <Board squares={current.squares} onClick={i => this.handleClick(i)} />
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          {/* <ol>{moves}</ol> */}
         </div>
       </div>
     );
@@ -102,4 +107,18 @@ function calculateWinner(squares) {
   return null;
 }
 
-export default Game;
+Game.propTypes = {
+  history: PropTypes.object,
+  xIsNext: PropTypes.bool,
+  stepNumber: PropTypes.number
+};
+
+const mapStateToProps = state => {
+  return{
+    history: state.history,
+    xIsNext: state.xIsNext,
+    stepNumber: state.stepNumber
+  };
+};
+
+export default connect(mapStateToProps)(Game);
